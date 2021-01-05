@@ -1,27 +1,35 @@
-function depthFirstSearch(rootNode, vertices, edges){
-    let stack = [rootNode]
-    let visited = [rootNode]
-    while (stack.length != 0 ){
-        let currentNode = stack.pop()
-        if (!currentNode.discovered){
-            currentNode.discovered = true
-            let adjNodes = findAdjNodes(currentNode, vertices, edges)
-            visited.push(...adjNodes)
-            stack.push(...adjNodes)
+function depthFirstSearch (rootNode, vertices, edges) {
+    const arrayExploredVertices = [];
+    const stack = [];
+    stack.push(rootNode);
+    while (stack.length > 0) {
+        let currentVertex = stack.pop();
+        if (currentVertex.discovered === null) {
+            currentVertex.discovered = true;
+            findAdjacentVertices(currentVertex, vertices, edges).forEach(vertex => stack.push(vertex));
+            arrayExploredVertices.push(currentVertex);
+        }
     }
-
-        
-    }
-
-    return visited
-
+    return arrayExploredVertices
 }
+function findAdjacentVertices (vertex, vertices, edges) {
+    let resultsArray = [];
 
-function findAdjNodes(node, vertices, edges){
-    let adjNodeNames = edges.map(edge => {
-       return edge.includes(node.name) && edge.filter(name => name !== node.name)[0]
-    })
+    edges.forEach(vertexNamePair => {
+        if (vertexNamePair[0] === vertex.name) {
+            resultsArray.push(vertexNamePair[1]);
+        }
+    });
 
-    return vertices.filter(vertex => adjNodeNames.includes(vertex.name) && vertex.discovered !== true)
-    
+    edges.forEach(vertexNamePair => {
+        if (vertexNamePair[1] === vertex.name) {
+            resultsArray.push(vertexNamePair[0]);
+        }
+    });
+
+    return resultsArray.map(vertexName => {
+        return vertices.find(vertex => {
+            return vertex.name === vertexName;
+        });
+    });
 }
